@@ -1,0 +1,44 @@
+#!/usr/bin/env zsh
+# Petit script pour se connecter à l'instance EC2
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${0}")" >/dev/null 2>&1 && pwd)"
+KEY="$SCRIPT_DIR/kube_private_key.pem"
+
+if [[ ! -f "$KEY" ]]; then
+  echo "Clef privée introuvable: $KEY"
+  exit 1
+fi
+
+# s'assurer des bonnes permissions (silencieux si déjà correct)
+chmod 600 "$KEY" 2>/dev/null || true
+
+# Liste des IP à ouvrir en même temps
+HOSTS=(
+  "3.72.112.94"
+  "18.185.51.192"
+  "18.193.121.155"
+  "63.176.187.196"
+)
+
+# Ouvre une nouvelle tab/fenêtre Terminal pour chaque IP (macOS)
+for host in "${HOSTS[@]}"; do
+  osascript <<APPLE
+tell application "Terminal"
+  do script "ssh -i '$KEY' ec2-user@${host}"
+  activate
+end tell
+APPLE
+  sleep 0.2
+done
+
+# Si tu préfères lancer en arrière-plan dans le même shell (non interactif),
+# décommente la ligne suivante et commente la boucle ci-dessus :
+# for host in "${HOSTS[@]}"; do ssh -i "$KEY" ec2-user@${host} -o BatchMode=yes -N & done
+
+#Ip list
+
+# 3.72.112.94
+# 18.185.51.192
+# 18.193.121.155
+# 63.176.187.196
