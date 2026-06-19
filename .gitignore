@@ -2,3 +2,5 @@ kube_private_key.pem
 **/.obsidian/
 **/.vscode/
 **/.DS_Store
+
+k8s/secret.yaml
